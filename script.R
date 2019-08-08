@@ -19,24 +19,32 @@ openSample <- function(){
 }
 
 
-## Function that takes a tokenized list and removes lines that include profanity
-censorize <- function(x, profanity){
-    bad_lines <- sapply(x, function(y) profanity %in% y) #finds lines with profanity
-    bad_lines <- apply(bad_lines, 2, any)
-    x[!bad_lines]
+## Function that takes output from readLines() and removes lines that include profanity
+## Need to find a suitable word list and ingest it in such a way that it will catch
+## start-of-line and end-of-line swears
+censorize <- function(file, profanity){
+    bad_lines <- sapply(profanity, function(x) grepl(x, file)) #finds lines with profanity
+    bad_lines <- apply(bad_lines, 1, any)
+    file[!bad_lines]
 }
 
+## Temporary dummy list for profanity
+profanity <- c("poop")
 
 ################################################################################
 
 ## Execution
 
-openSample
+openSample()
+
+twitter <- censorize(twitter, profanity)
+news <- censorize(newses, profanity)
+blogs <- censorize(blogs, profanity)
 
 ## Tokenizing using the tokenizers package performs very well in my opinion
 twit_tk <- tokenize_words(twitter)
 blog_tk <- tokenize_words(blogs)
-news_tk <- tokenize_words(newses)
+news_tk <- tokenize_words(news)
 
 
 
