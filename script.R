@@ -1,7 +1,6 @@
 ## Just some things to help me with my workspace
-library(tokenizers)
 library(tidytext)
-library(tm)
+library(quanteda)
 
 ## These 2 functions let me quickly read in either the full files or the subsamples
 openAll <- function(){
