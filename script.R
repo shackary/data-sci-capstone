@@ -18,11 +18,8 @@ openSample <- function(){
     closeAllConnections()
 }
 
-
-
 ## Function that takes output from readLines() and removes lines that include profanity
-## Need to find a suitable word list and ingest it in such a way that it will catch
-## start-of-line and end-of-line swears (see create_filter.R)
+## (see create_filter.R)
 censorize <- function(file, profanity){
     bad_lines <- sapply(profanity, function(x) grepl(x, file, ignore.case = T))
     bad_lines <- apply(bad_lines, 1, any)
