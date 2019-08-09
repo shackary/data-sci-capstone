@@ -11,21 +11,11 @@ openAll <- function(){
 }
 
 openSample <- function(){
-    twitter <<- readLines("./final/en_US/twitter_sample.txt", encoding = "UTF-8")
-    blogs <<- readLines("./final/en_US/blog_sample.txt", encoding = "UTF-8")
-    newses <<- readLines("./final/en_US/news_sample.txt", encoding = "UTF-8")
+    twitter <<- readLines("./final/en_US/twitter_filtered.txt", encoding = "UTF-8")
+    blogs <<- readLines("./final/en_US/blog_filtered.txt", encoding = "UTF-8")
+    newses <<- readLines("./final/en_US/news_filtered.txt", encoding = "UTF-8")
     closeAllConnections()
 }
-
-## Function that takes output from readLines() and removes lines that include profanity
-## (see create_filter.R)
-censorize <- function(file, profanity){
-    bad_lines <- sapply(profanity, function(x) grepl(x, file, ignore.case = T))
-    bad_lines <- apply(bad_lines, 1, any)
-    print(paste("removed", as.character(sum(bad_lines)), "entries"))
-    file[!bad_lines]
-}
-
 
 ################################################################################
 
@@ -33,18 +23,6 @@ censorize <- function(file, profanity){
 
 openSample()
 
-## Read in the current profanity list
-profanity <- readLines("./final/en_US/filter.txt")
-
-## Filter the text
-twitter <- censorize(twitter, profanity)
-news <- censorize(newses, profanity); rm(newses)
-blogs <- censorize(blogs, profanity)
-
-## Tokenizing using the tokenizers package performs very well in my opinion
-twit_tk <- tokenize_words(twitter)
-blog_tk <- tokenize_words(blogs)
-news_tk <- tokenize_words(news)
 
 
 
