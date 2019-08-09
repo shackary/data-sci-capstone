@@ -4,19 +4,17 @@
 list <- url("https://raw.githubusercontent.com/RobertJGabriel/Google-profanity-words/master/list.txt", open="rt")
 bad_words <- readLines(list)
 
-## Add whitespace before and after each word to prevent partial matches
-bad_words1 <- paste0(" ", bad_words, " ")
+## Add words missing from the default list
+bad_words <- c(bad_words, "bullshit")
 
-## MORE PROCESSING HERE???
+## Process the list into a regular expression that will find the full words
+## but not partial matches
+bad_words <- paste(bad_words, collapse = "|", sep = "")
+bad_words <- paste0("\\b(", bad_words, ")\\b")
 
 ## Write to file
-writeLines(bad_words, "./final/en_US/filter.txt", useBytes = T)
-
-## It's extremely inefficient to call grepl on each individual word; consider
-## concatenating them all into a single call.
-bad_words2 <- paste(bad_words, collapse = "|", sep = "")
-bad_words2 <- paste0("\\b(", bad_words2, ")\\b")
-## Will need to check on how to properly implement this
+writeLines(bad_words, "./final/en_US/filter.txt")
 
 ## Clean up
 closeAllConnections()
+rm(list, bad_words)
