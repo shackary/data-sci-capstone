@@ -19,3 +19,4 @@ writeLines(bad_words, "./final/en_US/filter.txt", useBytes = T)
 
 ## Clean up
 closeAllConnections()
+rm(bad_words, list)
