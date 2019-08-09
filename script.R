@@ -19,17 +19,17 @@ openSample <- function(){
 }
 
 
+
 ## Function that takes output from readLines() and removes lines that include profanity
 ## Need to find a suitable word list and ingest it in such a way that it will catch
-## start-of-line and end-of-line swears
+## start-of-line and end-of-line swears (see create_filter.R)
 censorize <- function(file, profanity){
-    bad_lines <- sapply(profanity, function(x) grepl(x, file)) #finds lines with profanity
+    bad_lines <- sapply(profanity, function(x) grepl(x, file))
     bad_lines <- apply(bad_lines, 1, any)
+    print(paste("removed", as.character(sum(bad_lines)), "entries"))
     file[!bad_lines]
 }
 
-## Temporary dummy list for profanity
-profanity <- c("poop")
 
 ################################################################################
 
@@ -37,6 +37,10 @@ profanity <- c("poop")
 
 openSample()
 
+## Read in the current profanity list
+profanity <- readLines("./final/en_US/filter.txt")
+
+## Filter the text
 twitter <- censorize(twitter, profanity)
 news <- censorize(newses, profanity)
 blogs <- censorize(blogs, profanity)
