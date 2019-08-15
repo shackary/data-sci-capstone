@@ -28,27 +28,35 @@ for(i in list(c("Tweets:", twit_tokens), c("Blogs:", blog_tokens), c("News:", ne
     cat(as.character(i[1]), "\n")
     cat("The longest line has", as.character(max(i[[4]])), "words.\n")
     cat("There are", as.character(sum(i[[4]] == 1)), "one-word lines.\n")
-    cat("Line length quantiles\n")
+    cat("Line length quantiles:\n")
     print(quantile(i[[4]]))
     cat("\n\n")
 }
 
 
 ## Plot word counts with percentile lines
+par(mfrow = c(1,1))
+
 hist(twit_tokens$Tokens, main = "Frequency of word count per line: Tweets",
-     xlab = "Words per line", breaks = "Scott")
-abline(v=quantile(twit_tokens$Tokens)[2:4], col = c("chartreuse3", "red", "chartreuse3"),
+     xlab = "Words per line", breaks = "Scott", col = "gainsboro")
+abline(v=quantile(twit_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
        lwd = 2, lty = "dashed")
 legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
-       lwd = 2, col = c("chartreuse3", "red"), box.lty = 0)
+       lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
 
 hist(blog_tokens$Tokens, main = "Frequency of word count per line: Blogs",
-     xlab = "Words per line", breaks = "Scott")
-#ablines and legend go here
+     xlab = "Words per line", breaks = "Scott", col = "gainsboro")
+abline(v=quantile(blog_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
+       lwd = 2, lty = "dashed")
+legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
+       lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
 
 hist(news_tokens$Tokens, main = "Frequency of word count per line: News",
-     xlab = "Words per line", breaks = "Scott")
-#ablines and legend go here
+     xlab = "Words per line", breaks = "Scott", col = "gainsboro")
+abline(v=quantile(news_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
+       lwd = 2, lty = "dashed")
+legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
+       lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
 
 
 
