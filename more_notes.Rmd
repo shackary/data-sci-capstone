@@ -1,0 +1,7 @@
+---
+title: "More R Notes"
+output: html_document
+---
+
+`unname()` <-- get just the values of a named vector  
+  
