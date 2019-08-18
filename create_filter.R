@@ -4,7 +4,7 @@
 censorize <- function(file, profanity){
     bad_lines <- sapply(profanity, function(x) grepl(x, file, ignore.case = T))
     bad_lines <- apply(bad_lines, 1, any)
-    print(paste("removed", as.character(sum(bad_lines)), "entries"))
+    cat("removed", as.character(sum(bad_lines)), "lines."))
     file[!bad_lines]
 }
 
@@ -26,11 +26,11 @@ blogs <- readLines("./final/en_US/blog_sample.txt", encoding = "UTF-8")
 news <- readLines("./final/en_US/news_sample.txt", encoding = "UTF-8")
 
 ## Filter them
-print("Twitter:")
+cat("Twitter:")
 twitter <- censorize(twitter, bad_words)
-print("Blogs:")
+cat("Blogs:")
 blogs <- censorize(blogs, bad_words)
-print("News:")
+cat("News:")
 news <- censorize(news, bad_words)
 
 ## Write the results to a new file
