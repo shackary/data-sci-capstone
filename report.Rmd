@@ -62,7 +62,7 @@ only the profane word because I wanted to avoid training my model on inauthentic
 examples unlikely to be encountered naturally, which is what the later method 
 would produce. The results of the filtering follow:  
   
-```{r filter, echo = F, cache = T}
+```{r filter, echo = F, cache = T, message = F, warning = F}
 ## Generates the profanity list to be used in filtering
 
 ## The main function removes lines containing profanity from a character vector
@@ -103,9 +103,6 @@ writeLines(twitter, "./final/en_US/twitter_filtered.txt", useBytes = T)
 writeLines(blogs, "./final/en_US/blog_filtered.txt", useBytes = T)
 writeLines(news, "./final/en_US/news_filtered.txt", useBytes = T)
 
-## Clean up
-closeAllConnections()
-rm(list, bad_words, twitter, news, blogs)
 ```
   
 This process removed about **5%** of each of the twitter and blog samples, and
