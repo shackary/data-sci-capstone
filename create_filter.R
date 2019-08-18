@@ -4,7 +4,7 @@
 censorize <- function(file, profanity){
     bad_lines <- sapply(profanity, function(x) grepl(x, file, ignore.case = T))
     bad_lines <- apply(bad_lines, 1, any)
-    cat("removed", as.character(sum(bad_lines)), "lines."))
+    cat("removed", as.character(sum(bad_lines)), "lines.")
     file[!bad_lines]
 }
 
