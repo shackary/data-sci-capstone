@@ -1,4 +1,5 @@
 library(quanteda)
+library(ggplot2)
 
 ## Read in data
 twitter <- readLines("./final/en_US/twitter_filtered.txt", encoding = "UTF-8")
@@ -59,6 +60,30 @@ legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed
        lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
 
 
+## Construct document-features matrices for words and bigrams using the full corpus
+dfm1 <- dfm(full_corp, remove = stopwords('english'),
+                remove_punct = T)
+
+dfm2 <- dfm(full_corp, remove = stopwords('english'),
+            remove_punct = T, ngrams = 2L)
+
+## Create data frames from the top features (for ease of plotting)
+features1 <- data.frame(word = as.character(names(topfeatures(dfm1, n = 15))),
+                        count = unname(topfeatures(dfm1, n = 15)))
+features2 <- data.frame(word = as.character(names(topfeatures(dfm2, n = 15))),
+                        count = unname(topfeatures(dfm2, n = 15)))
+
+## Plot time 
+ggplot(data = features1, aes(x = reorder(word, -count), y = count)) +
+    geom_bar(stat = "identity", aes(fill = count)) +
+    scale_fill_gradient(low = "plum", high = "darkorchid") +
+    labs(title = "Frequency of the top 15 words", x = "", y = "Count") + 
+    theme(axis.text.x = element_text(size = 14), legend.position = "none")
+ggplot(data = features2, aes(x = reorder(word, -count), y = count)) +
+    geom_bar(stat = "identity", aes(fill = count)) +
+    scale_fill_gradient(low = "plum", high = "darkorchid") +
+    labs(title = "Frequency of the top 15 bigrams", x = "", y = "Count") + 
+    theme(axis.text.x = element_text(size = 12), legend.position = "none")
 
 
 
