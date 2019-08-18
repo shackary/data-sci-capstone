@@ -55,6 +55,9 @@ cat("Length of blog_sample.txt:", as.character(length(blogs)), "lines.")
 cat("Length of news_sample.txt:", as.character(length(news)), "lines.")
 ```
   
+After I am confident in my work, I will repeat all parts of the process with the
+full data sets.  
+  
 After creating the samples, I applied a profanity filter using a publically 
 available [list of profanity](https://github.com/RobertJGabriel/Google-profanity-words)
 (content warning for the link). Any lines detected by the profanity filter were
@@ -116,7 +119,7 @@ the amount of data available for training.
 ### Exploratory data analysis  
   
 Following data processing, I used the `quanteda` package to examine some 
-properties of each of the three sources types. The number of tokens (words) per 
+properties of each of the three source types. The number of tokens (words) per 
 line varies by the source of the data:  
   
 ```{r line-lengths, echo = F}
