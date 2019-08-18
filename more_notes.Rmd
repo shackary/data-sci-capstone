@@ -2,6 +2,20 @@
 title: "More R Notes"
 output: html_document
 ---
+***
 
-`unname()` <-- get just the values of a named vector  
+***base***  
+  
+`unname()` <-- get just the values of a named vector
+
+***
+  
+***ggplot2***  
+  
+To change the order of the x axis in a bar chart so they're sorted in decreasing
+order, use:  
+  
+`aes(x = (reorder(x, -y)), y = y)`  
+  
+
   

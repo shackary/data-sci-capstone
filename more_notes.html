@@ -10,7 +10,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Zach" />
 
 
 <title>More R Notes</title>
@@ -364,13 +363,17 @@ summary {
 
 
 <h1 class="title toc-ignore">More R Notes</h1>
-<h4 class="author">Zach</h4>
-<h4 class="date">8/14/2019</h4>
 
 </div>
 
 
+<hr />
+<p><strong><em>base</em></strong></p>
 <p><code>unname()</code> &lt;– get just the values of a named vector</p>
+<hr />
+<p><strong><em>ggplot2</em></strong></p>
+<p>To change the order of the x axis in a bar chart so they’re sorted in decreasing order, use:</p>
+<p><code>aes(x = (reorder(x, -y)), y = y)</code></p>
 
 
 
