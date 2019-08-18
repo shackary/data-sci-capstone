@@ -26,9 +26,12 @@ blogs <- readLines("./final/en_US/blog_sample.txt", encoding = "UTF-8")
 news <- readLines("./final/en_US/news_sample.txt", encoding = "UTF-8")
 
 ## Filter them
+print("Twitter:")
 twitter <- censorize(twitter, bad_words)
-news <- censorize(news, bad_words)
+print("Blogs:")
 blogs <- censorize(blogs, bad_words)
+print("News:")
+news <- censorize(news, bad_words)
 
 ## Write the results to a new file
 writeLines(twitter, "./final/en_US/twitter_filtered.txt", useBytes = T)
