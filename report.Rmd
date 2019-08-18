@@ -33,7 +33,7 @@ news_tokens <- summary(news_corp, n = 49946)
 full_tokens <- summary(full_corp, n = 204448)
 ```
   
-###Summary 
+### Summary 
   
 This report summarizes the progress I have made so far in working with the data
 set provided for the course proejct. It summarizes the decisions made during 
@@ -41,7 +41,7 @@ processing as well as the major features of the data sample. Details on the
 implementation of my predcitive model and Shiny app have yet to be decided. An 
 appendix with the code used in producing these results is included.  
   
-###Data Processing and Cleaning 
+### Data Processing and Cleaning 
   
 Due to the size of the original data files provided for this project (> 150MB
 each) and the memory contstraints of my hardware, I began by creating smaller
@@ -55,7 +55,7 @@ cat("Length of news_sample.txt:", as.character(length(news)), "lines.")
 ```
   
 After creating the samples, I applied a profanity filter using a publically 
-available [list of profanity](https://raw.githubusercontent.com/RobertJGabriel/Google-profanity-words/master/list.txt)
+available [list of profanity](https://github.com/RobertJGabriel/Google-profanity-words)
 (content warning for the link). Any lines detected by the profanity filter were
 completely removed from the sample; I chose to remove the full line rather than
 only the profane word because I wanted to avoid training my model on inauthentic 
@@ -112,7 +112,7 @@ than news stories do. More importantly, it indicates that the remove-entire-line
 strategy I used for profanity filtering should not significantly detract from
 the amount of data available for training.  
   
-###Exploratory data analysis  
+### Exploratory data analysis  
   
 Following data processing, I used the `quanteda` package to examine some 
 properties of each of the three sources types. The number of tokens (words) per 
@@ -132,7 +132,7 @@ for(i in list(c("Tweets:", twit_tokens), c("Blogs:", blog_tokens), c("News:", ne
   
 This information can also be visualized using a histogram:  
   
-```{r hist, echo = F}
+```{r hist, echo = F, fig.width = 9}
 hist(twit_tokens$Tokens, main = "Frequency of word count per line: Tweets",
      xlab = "Words per line", breaks = "Scott", col = "gainsboro")
 abline(v=quantile(twit_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
@@ -174,7 +174,7 @@ topfeatures(dfm2, n = 15)
   
 This information can be presented visually as a bar graph:  
   
-```{r feature-plot, echo = F}
+```{r feature-plot, echo = F, fig.width = 10}
 ## Create data frames from the top features (for ease of plotting)
 features1 <- data.frame(word = as.character(names(topfeatures(dfm1, n = 15))),
                         count = unname(topfeatures(dfm1, n = 15)))
@@ -200,9 +200,9 @@ plot2
 
 ```
   
-###Next steps  
+### Next steps  
   
   
-###Appendix  
+### Appendix  
   
 
