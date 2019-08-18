@@ -4,11 +4,12 @@ author: "Zachary Sharrow"
 date: "8/18/2019"
 output: html_document
 ---
-
-```{r setup, include = F, warning = F, message = F, cache = T}
+```{r imports, include = F, warning = F, message = F}
 library(quanteda)
 library(ggplot2)
+```
 
+```{r setup, include = F, warning = F, message = F, cache = T}
 ## Read in data
 twitter <- readLines("./final/en_US/twitter_filtered.txt", encoding = "UTF-8")
 blogs <- readLines("./final/en_US/blog_filtered.txt", encoding = "UTF-8")
@@ -132,30 +133,37 @@ for(i in list(c("Tweets:", twit_tokens), c("Blogs:", blog_tokens), c("News:", ne
   
 This information can also be visualized using a histogram:  
   
-```{r hist, echo = F, fig.width = 9}
+```{r hist, echo = F, fig.width = 10}
 hist(twit_tokens$Tokens, main = "Frequency of word count per line: Tweets",
      xlab = "Words per line", breaks = "Scott", col = "gainsboro")
 abline(v=quantile(twit_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
-       lwd = 2, lty = "dashed")
+       lwd = 3, lty = "dashed")
 legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
        lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
 
 hist(blog_tokens$Tokens, main = "Frequency of word count per line: Blogs",
      xlab = "Words per line", breaks = "Scott", col = "gainsboro")
 abline(v=quantile(blog_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
-       lwd = 2, lty = "dashed")
+       lwd = 3, lty = "dashed")
 legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
        lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
 
 hist(news_tokens$Tokens, main = "Frequency of word count per line: News",
      xlab = "Words per line", breaks = "Scott", col = "gainsboro")
 abline(v=quantile(news_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
-       lwd = 2, lty = "dashed")
+       lwd = 3, lty = "dashed")
 legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
        lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
 ```
   
-Then, using the full corpus, it's possible to see the most common words and word
+We can see some obvious differences among the three formats. Tweets are 
+length-constrained, so the range of line lengths is much smaller than the other
+two formats; blog posts have especially long outliers; and news posts tend 
+toward a longer minimum length and a shorter maximum length than blogs.
+  
+***
+  
+Using the full corpus, it's possible to see the most common words and word
 pairs:  
   
 ```{r features, echo = F, cache = T}
@@ -193,6 +201,204 @@ plot1
 plot2 <- ggplot(data = features2, aes(x = reorder(word, -count), y = count)) +
     geom_bar(stat = "identity", aes(fill = count)) +
     scale_fill_gradient(low = "plum", high = "darkorchid") +
+    labs(title = "Frequency of the top 15 word pairs (bigrams)", x = "", y = "Count") + 
+    theme(axis.text.x = element_text(size = 12), legend.position = "none")
+
+plot2
+
+```
+  
+It is unsurprising that the most common words are short and carry a great deal
+of utility and that the most common word pairs tend to be common prepositional
+and conjunctive phrases. The reader may note that many of the words that appear
+in the top word pairs do not appear on the list of top individual words; this is 
+due to the way in which the `quanteda` package treats stopwords when generating
+ngrams. For the purposes of creating a predictive model, it is important not 
+to remove common function words, as they make up a large proportion of everyday
+language use, so we should be greatly interested in the word pair plot.
+  
+### Next steps  
+  
+The next step in the project is to develop the predictive model and implement it
+as a Shiny app. I am continuing to independently research the most effective 
+means for creating the model, but in honesty, I must confess that I still feel
+a bit lost at sea and do not have firm plans at this time. To my peer graders:
+I would appreciate any guidance you can offer pointing me toward useful resources
+for accomplishing this.  
+  
+Thank you for reading!
+  
+### Appendix (code)  
+  
+**Generating samples**  
+  
+```{r, eval = F}
+## CREATING THE SAMPLES
+
+## Set seed for reproducibility
+set.seed(1180)
+
+## Read in the files to be sampled
+twitter <<- readLines("./final/en_US/en_US.twitter.txt", encoding = "UTF-8") 
+blogs <<- readLines("./final/en_US/en_US.blogs.txt", encoding = "UTF-8")
+newses <<- readLines("./final/en_US/en_US.news.txt", encoding = "UTF-8")
+
+## Sample 5 percent of each file
+twitter_sample <- sample(twitter, length(twitter) * .05)
+blog_sample <- sample(blogs, length(blogs) * .05)
+news_sample <- sample(newses, length(newses) * .05)
+
+## Write the samples to a file so they're easier to work with
+writeLines(twitter_sample, "./final/en_US/twitter_sample.txt", useBytes = T)
+writeLines(blog_sample, "./final/en_US/blog_sample.txt", useBytes = T)
+writeLines(news_sample, "./final/en_US/news_sample.txt", useBytes = T)
+
+## Clean up
+closeAllConnections()
+rm(twitter, newses, blogs, twitter_sample, news_sample, blog_sample)
+```
+  
+**Profanity filtering**  
+  
+```{r, eval = F}
+## Generates the profanity list to be used in filtering
+
+## The main function removes lines containing profanity from a character vector
+censorize <- function(file, profanity){
+    bad_lines <- sapply(profanity, function(x) grepl(x, file, ignore.case = T))
+    bad_lines <- apply(bad_lines, 1, any)
+    cat("removed", as.character(sum(bad_lines)), "lines.")
+    file[!bad_lines]
+}
+
+## Get list from the source
+list <- url("https://raw.githubusercontent.com/RobertJGabriel/Google-profanity-words/master/list.txt", open="rt")
+bad_words <- readLines(list)
+
+## Add words missing from the default list
+bad_words <- c(bad_words, "bullshit")
+
+## Process the list into a regular expression that will find the full words
+## but not partial matches
+bad_words <- paste(bad_words, collapse = "|", sep = "")
+bad_words <- paste0("\\b(", bad_words, ")\\b")
+
+## Read in the samples
+twitter <- readLines("./final/en_US/twitter_sample.txt", encoding = "UTF-8")
+blogs <- readLines("./final/en_US/blog_sample.txt", encoding = "UTF-8")
+news <- readLines("./final/en_US/news_sample.txt", encoding = "UTF-8")
+
+## Filter them
+cat("Twitter:")
+twitter <- censorize(twitter, bad_words)
+cat("Blogs:")
+blogs <- censorize(blogs, bad_words)
+cat("News:")
+news <- censorize(news, bad_words)
+
+## Write the results to a new file
+writeLines(twitter, "./final/en_US/twitter_filtered.txt", useBytes = T)
+writeLines(blogs, "./final/en_US/blog_filtered.txt", useBytes = T)
+writeLines(news, "./final/en_US/news_filtered.txt", useBytes = T)
+
+## Clean up
+closeAllConnections()
+rm(list, bad_words, twitter, news, blogs)
+```
+  
+**The main script**  
+  
+```{r, eval = F}
+library(quanteda)
+library(ggplot2)
+
+## Read in data
+twitter <- readLines("./final/en_US/twitter_filtered.txt", encoding = "UTF-8")
+blogs <- readLines("./final/en_US/blog_filtered.txt", encoding = "UTF-8")
+news <- readLines("./final/en_US/news_filtered.txt", encoding = "UTF-8")
+
+
+## Concatenate them into the full data set
+corpus <- c(twitter, blogs, news)
+
+
+## Generate quanteda corpuses for each type and the full corpus
+twit_corp <- corpus(twitter)
+blog_corp <- corpus(blogs)
+news_corp <- corpus(news) 
+full_corp <- corpus(corpus)
+
+
+## Generate summary statistics about each corpus
+twit_tokens <- summary(twit_corp, n = 111755)
+blog_tokens <- summary(blog_corp, n = 42747)
+news_tokens <- summary(news_corp, n = 49946)
+full_tokens <- summary(full_corp, n = 204448)
+
+## Look at the longest and shortest lines
+for(i in list(c("Tweets:", twit_tokens), c("Blogs:", blog_tokens), c("News:", news_tokens))){
+    cat(as.character(i[1]), "\n")
+    cat("The longest line has", as.character(max(i[[4]])), "words.\n")
+    cat("There are", as.character(sum(i[[4]] == 1)), "one-word lines.\n")
+    cat("Line length quantiles:\n")
+    print(quantile(i[[4]]))
+    cat("\n\n")
+}
+
+
+## Plot word counts with percentile lines
+
+hist(twit_tokens$Tokens, main = "Frequency of word count per line: Tweets",
+     xlab = "Words per line", breaks = "Scott", col = "gainsboro")
+abline(v=quantile(twit_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
+       lwd = 2, lty = "dashed")
+legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
+       lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
+
+hist(blog_tokens$Tokens, main = "Frequency of word count per line: Blogs",
+     xlab = "Words per line", breaks = "Scott", col = "gainsboro")
+abline(v=quantile(blog_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
+       lwd = 2, lty = "dashed")
+legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
+       lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
+
+hist(news_tokens$Tokens, main = "Frequency of word count per line: News",
+     xlab = "Words per line", breaks = "Scott", col = "gainsboro")
+abline(v=quantile(news_tokens$Tokens)[2:4], col = c("dodgerblue", "orangered1", "dodgerblue"),
+       lwd = 2, lty = "dashed")
+legend(x = "topright", legend = c("25th/75th percentile", "mean"), lty = "dashed",
+       lwd = 2, col = c("dodgerblue", "orangered1"), box.lty = 0)
+
+
+## Construct document-features matrices for words and bigrams using the full corpus
+dfm1 <- dfm(full_corp, remove = stopwords('english'),
+                remove_punct = T)
+
+dfm2 <- dfm(full_corp, remove = stopwords('english'),
+            remove_punct = T, ngrams = 2L)
+
+## See the most common features
+topfeatures(dfm1, n = 15)
+topfeatures(dfm2, n = 15)
+
+## Create data frames from the top features (for ease of plotting)
+features1 <- data.frame(word = as.character(names(topfeatures(dfm1, n = 15))),
+                        count = unname(topfeatures(dfm1, n = 15)))
+features2 <- data.frame(word = as.character(names(topfeatures(dfm2, n = 15))),
+                        count = unname(topfeatures(dfm2, n = 15)))
+
+## Plot the top features 
+plot1 <- ggplot(data = features1, aes(x = reorder(word, -count), y = count)) +
+    geom_bar(stat = "identity", aes(fill = count)) +
+    scale_fill_gradient(low = "plum", high = "darkorchid") +
+    labs(title = "Frequency of the top 15 words", x = "", y = "Count") + 
+    theme(axis.text.x = element_text(size = 14), legend.position = "none")
+
+plot1
+
+plot2 <- ggplot(data = features2, aes(x = reorder(word, -count), y = count)) +
+    geom_bar(stat = "identity", aes(fill = count)) +
+    scale_fill_gradient(low = "plum", high = "darkorchid") +
     labs(title = "Frequency of the top 15 bigrams", x = "", y = "Count") + 
     theme(axis.text.x = element_text(size = 12), legend.position = "none")
 
@@ -200,9 +406,12 @@ plot2
 
 ```
   
-### Next steps  
+**Technical details**  
   
+This analysis was carried out totally from within RStudio Version 1.2.1522
+on a computer running the following:  
   
-### Appendix  
-  
+```{r}
+sessionInfo()
+```
 
