@@ -36,7 +36,6 @@ for(i in list(c("Tweets:", twit_tokens), c("Blogs:", blog_tokens), c("News:", ne
 
 
 ## Plot word counts with percentile lines
-par(mfrow = c(1,1))
 
 hist(twit_tokens$Tokens, main = "Frequency of word count per line: Tweets",
      xlab = "Words per line", breaks = "Scott", col = "gainsboro")
@@ -67,6 +66,10 @@ dfm1 <- dfm(full_corp, remove = stopwords('english'),
 dfm2 <- dfm(full_corp, remove = stopwords('english'),
             remove_punct = T, ngrams = 2L)
 
+## See the most common features
+topfeatures(dfm1, n = 15)
+topfeatures(dfm2, n = 15)
+
 ## Create data frames from the top features (for ease of plotting)
 features1 <- data.frame(word = as.character(names(topfeatures(dfm1, n = 15))),
                         count = unname(topfeatures(dfm1, n = 15)))
@@ -74,16 +77,21 @@ features2 <- data.frame(word = as.character(names(topfeatures(dfm2, n = 15))),
                         count = unname(topfeatures(dfm2, n = 15)))
 
 ## Plot time 
-ggplot(data = features1, aes(x = reorder(word, -count), y = count)) +
+plot1 <- ggplot(data = features1, aes(x = reorder(word, -count), y = count)) +
     geom_bar(stat = "identity", aes(fill = count)) +
     scale_fill_gradient(low = "plum", high = "darkorchid") +
     labs(title = "Frequency of the top 15 words", x = "", y = "Count") + 
     theme(axis.text.x = element_text(size = 14), legend.position = "none")
-ggplot(data = features2, aes(x = reorder(word, -count), y = count)) +
+
+plot1
+
+plot2 <- ggplot(data = features2, aes(x = reorder(word, -count), y = count)) +
     geom_bar(stat = "identity", aes(fill = count)) +
     scale_fill_gradient(low = "plum", high = "darkorchid") +
     labs(title = "Frequency of the top 15 bigrams", x = "", y = "Count") + 
     theme(axis.text.x = element_text(size = 12), legend.position = "none")
+
+plot2
 
 
 
