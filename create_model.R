@@ -2,11 +2,28 @@ library(dplyr)
 library(tidyr)
 library(tidytext)
 
+################################################################################
+
+## Some trial functions
+guess_word <- function(n1, n2){
+    n3 <- trigrams %>% filter(word1 == n1, word2 == n2) %>%
+        sample_n(1, weight = n) %>% .[["word3"]]
+    n3
+}
+
+show_possibilities <- function(n1, n2){
+    trigrams %>% filter(word1 == n1, word2 == n2) %>% View()
+}
+
+################################################################################
+
+## Actual script
 
 ## Read in data
 twitter <- readLines("./final/en_US/twitter_filtered.txt", encoding = "UTF-8")
 blogs <- readLines("./final/en_US/blog_filtered.txt", encoding = "UTF-8")
 news <- readLines("./final/en_US/news_filtered.txt", encoding = "UTF-8")
+
 
 
 ## Concatenate them into the full data set
