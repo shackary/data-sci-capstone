@@ -4,7 +4,7 @@ library(tidytext)
 
 ################################################################################
 
-## Some trial functions
+## Some trial functions  -- refactor these so they take an additiona n argument between 2 and...4?
 guess_word <- function(string){
     n1 <- prep_string(string)[1]
     n2 <- prep_string(string)[2]
@@ -23,6 +23,7 @@ prep_string <- function(string){
     tokens <- tokenizers::tokenize_words(string)
     tokens <- tail(tokens[[1]], 2)
 }
+
 
 ################################################################################
 
@@ -43,10 +44,12 @@ rm(twitter, blogs, news)
 corpus_tbl <- tibble(text = corpus)
 bigrams <- unnest_tokens(corpus_tbl, bigrams, text, token = "ngrams", n = 2)
 trigrams <- unnest_tokens(corpus_tbl, trigrams, text, token = "ngrams", n =3)
+tetragrams <- unnest_tokens(corpus_tbl, tetragrams, text, token = "ngrams", n = 4)
 
 ## Grab the total number of bi- and tri-grams, as we'll need these later
 bigram_total <- nrow(bigrams)
 trigram_total <- nrow(trigrams)
+tetragram_total <- nrow(tetragrams)
 
 ## Tablefy and calculate weights
 bigrams <- bigrams %>% separate(bigrams, into = c("word1", "word2"), sep = " ") %>%
@@ -56,6 +59,11 @@ trigrams <- trigrams %>% separate(trigrams, into = c("word1", "word2", "word3"),
                      sep = " ") %>%
     count(word1, word2, word3, sort = T) %>% 
     mutate(n = n/trigram_total)
+tetragrams <- tetragrams %>% separate(tetragrams,
+                                      into = c("word1", "word2", "word3", "word4"),
+                                  sep = " ") %>%
+    count(word1, word2, word3, word4, sort = T) %>% 
+    mutate(n = n/tetragram_total)
 
 
 
