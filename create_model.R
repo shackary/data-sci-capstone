@@ -5,14 +5,23 @@ library(tidytext)
 ################################################################################
 
 ## Some trial functions
-guess_word <- function(n1, n2){
+guess_word <- function(string){
+    n1 <- prep_string(string)[1]
+    n2 <- prep_string(string)[2]
     n3 <- trigrams %>% filter(word1 == n1, word2 == n2) %>%
         sample_n(1, weight = n) %>% .[["word3"]]
     n3
 }
 
-show_possibilities <- function(n1, n2){
+show_possibilities <- function(string){
+    n1 <- prep_string(string)[1]
+    n2 <- prep_string(string)[2]
     trigrams %>% filter(word1 == n1, word2 == n2) %>% View()
+}
+
+prep_string <- function(string){
+    tokens <- tokenizers::tokenize_words(string)
+    tokens <- tail(tokens[[1]], 2)
 }
 
 ################################################################################
