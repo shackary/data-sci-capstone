@@ -96,10 +96,11 @@ corpus <- c(twitter, blogs, news)
 rm(twitter, blogs, news)
 
 ## Tokenize
-corpus_tbl <- tibble(text = corpus)
-bigrams <- unnest_tokens(corpus_tbl, bigrams, text, token = "ngrams", n = 2)
-trigrams <- unnest_tokens(corpus_tbl, trigrams, text, token = "ngrams", n =3)
-tetragrams <- unnest_tokens(corpus_tbl, tetragrams, text, token = "ngrams", n = 4)
+corpus <- tibble(text = corpus)
+bigrams <- unnest_tokens(corpus, bigrams, text, token = "ngrams", n = 2,
+                         stopwords = c("rt"))
+trigrams <- unnest_tokens(corpus, trigrams, text, token = "ngrams", n =3)
+tetragrams <- unnest_tokens(corpus, tetragrams, text, token = "ngrams", n = 4)
 
 ## Grab the total number of ngrams, as we'll need these later
 bigram_total <- nrow(bigrams)
