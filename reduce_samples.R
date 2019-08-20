@@ -1,6 +1,8 @@
 library(dplyr)
 library(tidyr)
+library(readr)
 library(tidytext)
+
 
 ################################################################################
 
@@ -28,19 +30,37 @@ bigrams1 <- unnest_tokens(corpus1, bigrams, text, token = "ngrams", n = 2,
 ## Grab total (for weighting)
 bigram_total1 <- nrow(bigrams1)
 
-## Count up, remove the entries that only appear once, then separate the words
-bigrams1 <- bigrams1 %>% count(bigrams, sort = T) %>% filter(n > 1) %>%
-    separate(bigrams, into = c("word1", "word2"), sep = " ")
+## Count up and remove the entries that only appear once
+bigrams1 <- bigrams1 %>% count(bigrams, sort = T) %>% filter(n > 1)
 
 
 ## Now, do the same for the other half
 bigrams2 <- unnest_tokens(corpus2, bigrams, text, token = "ngrams", n = 2,
                           stopwords = c("rt"))
 bigram_total2 <- nrow(bigrams2)
-bigrams2 <- bigrams2 %>% count(bigrams, sort = T) %>% filter(n > 1) %>%
-    separate(bigrams, into = c("word1", "word2"), sep = " ")
+bigrams2 <- bigrams2 %>% count(bigrams, sort = T) %>% filter(n > 1)
                           
-                          
+## Merging: get the intersection, then create a data frame that totals the
+## values of the common bigrams
+bi_intersect <- intersect(bigrams1$bigrams, bigrams2$bigrams)
+bi_intersect_n <- bigrams1$n[bigrams1$bigrams %in% bi_intersect] + bigrams2$n[bigrams2$bigrams %in% bi_intersect]
+bigrams_both <- data.frame(bi_intersect, bi_intersect_n, stringsAsFactors = F)
+colnames(bigrams_both) <- c("bigrams", "n")
+
+## Remove the values from the two lists that appear in the both list
+bigrams1 <- bigrams1[!(bigrams1$bigrams %in% bigrams_both$bigrams),]
+bigrams2 <- bigrams2[!(bigrams2$bigrams %in% bigrams_both$bigrams),]
+
+## Union them all
+bigrams_all <- union(bigrams_both, union(bigrams1, bigrams2))
+
+## Finally, separate into words and normalize the weights
+bigrams_all <- bigrams_all %>% 
+    separate(bigrams, into = c("word1", "word2"), sep = " ")  %>% 
+    mutate(n = n/(bigram_total1 + bigram_total2))
+
+## Write to CSV because whew
+write_csv(bigrams_all, path = "./final/en_US/bigrams.csv")
                           
 ###############################################################################
 trigrams <- unnest_tokens(corpus, trigrams, text, token = "ngrams", n =3)
