@@ -5,6 +5,31 @@ library(tidytext)
 ################################################################################
 
 ## Main prediction functions
+
+generate_sentence <- function(sentence, add = sample(1:9, 1)){
+    for(i in seq_len(add)){
+        sentence <- c(sentence, get_next_word(sentence))
+    }
+    cat(sentence)
+}
+
+
+get_next_word <- function(string){
+    if(get_word(string, 4) == T){
+        word <- get_word(string, 4)
+    }
+    else if(get_word(string, 3) == T){
+        word <- get_word(string, 3)
+    }
+    else if(get_word(string, 2) == T){
+        word <- get_word(string, 3)
+    }
+    else{
+        word <- sample_n(bigrams, 1)[[1]]
+    }
+    word
+}
+
 get_word <- function(string, gram){
     raw <- sample_n(get_possibilities(string, gram), 1, weight = n)[gram]
     as.character(raw)
