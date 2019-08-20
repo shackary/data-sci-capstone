@@ -4,24 +4,54 @@ library(tidytext)
 
 ################################################################################
 
-## Some trial functions  -- refactor these so they take an additiona n argument between 2 and...4?
-guess_word <- function(string){
-    n1 <- prep_string(string)[1]
-    n2 <- prep_string(string)[2]
-    n3 <- trigrams %>% filter(word1 == n1, word2 == n2) %>%
-        sample_n(1, weight = n) %>% .[["word3"]]
-    n3
+## Main prediction functions
+get_word <- function(string, gram){
+    raw <- sample_n(get_possibilities(string, gram), 1, weight = n)[gram]
+    as.character(raw)
 }
 
-show_possibilities <- function(string){
-    n1 <- prep_string(string)[1]
-    n2 <- prep_string(string)[2]
-    trigrams %>% filter(word1 == n1, word2 == n2) %>% View()
+get_possibilities <- function(string, n){
+    phrase <- build_phrase(string, n)
+    if(length(phrase) == 1){
+        out <- bigrams %>% filter(word1 == phrase[1])
+        
+    }
+    if(length(phrase) == 2){
+        out <- trigrams %>% filter(word1 == phrase[1], word2 == phrase[2])
+        
+    }
+    if(length(phrase) == 3){
+        out <- tetragrams %>% filter(word1 == phrase[1], word2 == phrase[2],
+                              word3 == phrase[3])
+        
+    }
+    out
 }
 
-prep_string <- function(string){
+prep_string <- function(string, n){
     tokens <- tokenizers::tokenize_words(string)
-    tokens <- tail(tokens[[1]], 2)
+    tokens <- tail(tokens[[1]], n)
+    tokens
+}
+
+build_phrase <- function(string, n){
+    n <- n - 1 
+    if(n == 1){
+        n1 <- prep_string(string, n)[1]
+        out <- c(n1)
+    }
+    if(n == 2){
+        n1 <- prep_string(string, n)[1]
+        n2 <- prep_string(string, n)[2]
+        out <- c(n1, n2)
+    }
+    if(n == 3){
+        n1 <- prep_string(string, n)[1]
+        n2 <- prep_string(string, n)[2]
+        n3 <- prep_string(string, n)[3]
+        out <- c(n1, n2, n3)
+    }
+    out
 }
 
 
@@ -46,7 +76,7 @@ bigrams <- unnest_tokens(corpus_tbl, bigrams, text, token = "ngrams", n = 2)
 trigrams <- unnest_tokens(corpus_tbl, trigrams, text, token = "ngrams", n =3)
 tetragrams <- unnest_tokens(corpus_tbl, tetragrams, text, token = "ngrams", n = 4)
 
-## Grab the total number of bi- and tri-grams, as we'll need these later
+## Grab the total number of ngrams, as we'll need these later
 bigram_total <- nrow(bigrams)
 trigram_total <- nrow(trigrams)
 tetragram_total <- nrow(tetragrams)
