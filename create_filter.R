@@ -21,9 +21,9 @@ bad_words <- paste(bad_words, collapse = "|", sep = "")
 bad_words <- paste0("\\b(", bad_words, ")\\b")
 
 ## Read in the samples
-twitter <- readLines("./final/en_US/twitter_sample.txt", encoding = "UTF-8")
-blogs <- readLines("./final/en_US/blog_sample.txt", encoding = "UTF-8")
-news <- readLines("./final/en_US/news_sample.txt", encoding = "UTF-8")
+twitter <- readLines("./final/en_US/en_US.twitter.txt", encoding = "UTF-8")
+blogs <- readLines("./final/en_US/en_US.blogs.txt", encoding = "UTF-8")
+news <- readLines("./final/en_US/en_US.news.txt", encoding = "UTF-8")
 
 ## Filter them
 cat("Twitter:")
@@ -34,9 +34,9 @@ cat("News:")
 news <- censorize(news, bad_words)
 
 ## Write the results to a new file
-writeLines(twitter, "./final/en_US/twitter_filtered.txt", useBytes = T)
-writeLines(blogs, "./final/en_US/blog_filtered.txt", useBytes = T)
-writeLines(news, "./final/en_US/news_filtered.txt", useBytes = T)
+writeLines(twitter, "./final/en_US/twitter_filtered_full.txt", useBytes = T)
+writeLines(blogs, "./final/en_US/blog_filtered_full.txt", useBytes = T)
+writeLines(news, "./final/en_US/news_filtered_full.txt", useBytes = T)
 
 ## Clean up
 closeAllConnections()
