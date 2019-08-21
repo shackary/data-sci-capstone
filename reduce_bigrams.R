@@ -50,10 +50,9 @@ bigrams2 <- bigrams2[!(bigrams2$bigrams %in% bigrams_both$bigrams),]
 ## Union them all
 bigrams_all <- union(bigrams_both, union(bigrams1, bigrams2))
 
-## Finally, separate into words and normalize the weights
+## Finally, separate into words
 bigrams_all <- bigrams_all %>% 
-    separate(bigrams, into = c("word1", "word2"), sep = " ")  %>% 
-    mutate(n = n/(bigram_total1 + bigram_total2))
+    separate(bigrams, into = c("word1", "word2"), sep = " ")
 
 ## Write to CSV because whew
 write_csv(bigrams_all, path = "./final/en_US/bigrams.csv")

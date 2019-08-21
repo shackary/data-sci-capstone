@@ -26,7 +26,6 @@ rm(corpus)
 ## Part 1
 trigrams1 <- unnest_tokens(corpus1, trigrams, text, token = "ngrams", n = 3,
                            stopwords = c("rt"))
-trigram_total1 <- nrow(trigrams1)
 trigrams1 <- trigrams1 %>% count(trigrams, sort = T) %>% filter(n > 2)
 write_csv(trigrams1, path = "./final/en_US/trigrams1.csv")
 rm(corpus1, trigrams1)
@@ -34,7 +33,6 @@ rm(corpus1, trigrams1)
 ## Part 2
 trigrams2 <- unnest_tokens(corpus2, trigrams, text, token = "ngrams", n = 3,
                            stopwords = c("rt"))
-trigram_total2 <- nrow(trigrams2)
 trigrams2 <- trigrams2 %>% count(trigrams, sort = T) %>% filter(n > 2)
 write_csv(trigrams2, path = "./final/en_US/trigrams2.csv")
 rm(corpus2, trigrams2)
@@ -42,7 +40,6 @@ rm(corpus2, trigrams2)
 ## Part 3
 trigrams3 <- unnest_tokens(corpus3, trigrams, text, token = "ngrams", n = 3,
                            stopwords = c("rt"))
-trigram_total3 <- nrow(trigrams3)
 trigrams3 <- trigrams3 %>% count(trigrams, sort = T) %>% filter(n > 2)
 write_csv(trigrams3, path = "./final/en_US/trigrams3.csv")
 rm(corpus3, trigrams3)
@@ -80,12 +77,9 @@ trigrams3 <- trigrams3[!(trigrams3$trigrams %in% trigrams_both$trigrams),]
 trigrams_all <- union(trigrams_both, union(trigrams_merge1, trigrams3))
 rm(trigrams_merge1, trigrams3, trigrams_both, tri_intersect, tri_intersect_n)
 
-## Finally, separate into words and calculate weights
-trigrams_all <- read_csv("./final/en_US/trigrams_all.csv")
-trigram_total <- trigram_total1 + trigram_total2 + trigram_total3
+## Finally, separate into words
 trigrams_all <- trigrams_all %>% 
-    separate(trigrams, into = c("word1", "word2", "word3"), sep = " ")  %>% 
-    mutate(n = n/(trigram_total))
+    separate(trigrams, into = c("word1", "word2", "word3"), sep = " ")
 
 ## And write to file
 write_csv(trigrams_all, "./final/en_US/trigrams.csv")
