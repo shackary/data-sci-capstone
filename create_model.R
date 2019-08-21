@@ -8,26 +8,23 @@ library(tokenizers)
 
 generate_sentence <- function(sentence, add = sample(1:9, 1)){
     for(i in seq_len(add)){
-        sentence <- c(sentence, get_next_word(sentence))
+        nxt <- get_next_word(sentence)
+        if(nxt == "i") nxt <- toupper(nxt)
+        sentence <- paste(sentence, nxt)
     }
-    substr(sentence[1], 1, 1) <- toupper(substr(sentence[1], 1, 1))
-    sentence[length(sentence)] <- paste0(sentence[length(sentence)], ".")
-    cat(sentence)
+    substr(sentence, 1, 1) <- toupper(substr(sentence, 1, 1))
+    sentence <- paste0(sentence, ".")
+    cat(sentence, "\n")
 }
 
 
 get_next_word <- function(string){
-#    if(get_word(string, 4) == T){
-#        word <- get_word(string, 4)
-#    }
-    if(get_word(string, 3) == T){
-        word <- get_word(string, 3)
-    }
-    else if(get_word(string, 2) == T){
-        word <- get_word(string, 3)
-    }
-    else{
-        word <- sample_n(bigrams, 1)[[1]]
+    word <- get_word(string, 3)
+    if(word == "character(0)"){
+        word <- get_word(string, 2)
+        if (word == "character(0)"){
+            word <- sample_n(bigrams, 1)[[1]]
+        }
     }
     word
 }
