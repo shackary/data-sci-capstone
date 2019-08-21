@@ -52,9 +52,41 @@ rm(corpus3, trigrams3)
 ## Stitch them together
 
 ## First parts 1 and 2
+trigrams1 <- read_csv("./final/en_US/trigrams1.csv")
+trigrams2 <- read_csv("./final/en_US/trigrams2.csv")
 
+## Get the intersection, then create a data frame from that list with totaled ns
+tri_intersect <- intersect(trigrams1$trigrams, trigrams2$trigrams)
+tri_intersect_n <- trigrams1$n[trigrams1$trigrams %in% tri_intersect] + trigrams2$n[trigrams2$trigrams %in% tri_intersect]
+trigrams_both <- data.frame(tri_intersect, tri_intersect_n, stringsAsFactors = F)
+colnames(trigrams_both) <- c("trigrams", "n")
 
+## Remove the values from the two lists that appear in the both list
+trigrams1 <- trigrams1[!(trigrams1$trigrams %in% trigrams_both$trigrams),]
+trigrams2 <- trigrams2[!(trigrams2$trigrams %in% trigrams_both$trigrams),]
 
+## Union them all
+trigrams_merge1 <- union(trigrams_both, union(trigrams1, trigrams2))
+rm(trigrams1, trigrams2, trigrams_both, tri_intersect, tri_intersect_n)
 
+## Then merge1 with part 3
+trigrams3 <- read_csv("./final/en_US/trigrams3.csv")
+tri_intersect <- intersect(trigrams_merge1$trigrams, trigrams3$trigrams)
+tri_intersect_n <- trigrams_merge1$n[trigrams_merge1$trigrams %in% tri_intersect] + trigrams3$n[trigrams3$trigrams %in% tri_intersect]
+trigrams_both <- data.frame(tri_intersect, tri_intersect_n, stringsAsFactors = F)
+colnames(trigrams_both) <- c("trigrams", "n")
+trigrams_merge1 <- trigrams_merge1[!(trigrams_merge1$trigrams %in% trigrams_both$trigrams),]
+trigrams3 <- trigrams3[!(trigrams3$trigrams %in% trigrams_both$trigrams),]
+trigrams_all <- union(trigrams_both, union(trigrams_merge1, trigrams3))
+rm(trigrams_merge1, trigrams3, trigrams_both, tri_intersect, tri_intersect_n)
 
+## Write to file again
+write_csv(trigrams_all, "./final/en_US/trigrams_all.csv")
+
+## Finally, separate into words and calculate weights
+trigrams_all <- read_csv("./final/en_US/trigrams_all.csv")
+trigram_total <- trigram_total1 + trigram_total2 + trigram_total3
+trigrams_all <- trigrams_all %>% 
+    separate(trigrams, into = c("word1", "word2", "word3"), sep = " ")  %>% 
+    mutate(n = n/(trigram_total))
 
