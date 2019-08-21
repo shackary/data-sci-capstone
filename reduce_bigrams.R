@@ -23,6 +23,8 @@ rm(corpus)
 
 ## Deal with each set of ngrams individually
 
+
+##############################BIGRAMS###########################################
 ##Generate ngrams
 bigrams1 <- unnest_tokens(corpus1, bigrams, text, token = "ngrams", n = 2,
                          stopwords = c("rt"))
@@ -62,26 +64,9 @@ bigrams_all <- bigrams_all %>%
 ## Write to CSV because whew
 write_csv(bigrams_all, path = "./final/en_US/bigrams.csv")
                           
-###############################################################################
-trigrams <- unnest_tokens(corpus, trigrams, text, token = "ngrams", n =3)
+#################################TRIGRAMS#######################################
+trigrams1 <- unnest_tokens(corpus1, trigrams, text, token = "ngrams", n = 3,
+                          stopwords = c("rt"))
+trigram_total1 <- nrow(trigrams1)
+trigrams1 <- trigrams1 %>% count(trigrams, sort = T) %>% filter(n > 1)
 
-
-
-tetragrams <- unnest_tokens(corpus, tetragrams, text, token = "ngrams", n = 4)
-
-## Grab the total number of ngrams, as we'll need these later
-
-trigram_total <- nrow(trigrams)
-tetragram_total <- nrow(tetragrams)
-
-## Tablefy and calculate weights
-
-trigrams <- trigrams %>% separate(trigrams, into = c("word1", "word2", "word3"),
-                                  sep = " ") %>%
-    count(word1, word2, word3, sort = T) %>% 
-    mutate(n = n/trigram_total)
-tetragrams <- tetragrams %>% separate(tetragrams,
-                                      into = c("word1", "word2", "word3", "word4"),
-                                      sep = " ") %>%
-    count(word1, word2, word3, word4, sort = T) %>% 
-    mutate(n = n/tetragram_total)
