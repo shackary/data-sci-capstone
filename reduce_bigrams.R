@@ -20,12 +20,7 @@ corpus1 <- tibble(text = corpus[seq(1, length(corpus), by = 2)])
 corpus2 <- tibble(text = corpus[seq(2, length(corpus), by = 2)])
 rm(corpus)
 
-
-## Deal with each set of ngrams individually
-
-
-##############################BIGRAMS###########################################
-##Generate ngrams
+## Generate ngrams
 bigrams1 <- unnest_tokens(corpus1, bigrams, text, token = "ngrams", n = 2,
                          stopwords = c("rt"))
 
@@ -34,7 +29,6 @@ bigram_total1 <- nrow(bigrams1)
 
 ## Count up and remove the entries that only appear once
 bigrams1 <- bigrams1 %>% count(bigrams, sort = T) %>% filter(n > 1)
-
 
 ## Now, do the same for the other half
 bigrams2 <- unnest_tokens(corpus2, bigrams, text, token = "ngrams", n = 2,
@@ -63,10 +57,4 @@ bigrams_all <- bigrams_all %>%
 
 ## Write to CSV because whew
 write_csv(bigrams_all, path = "./final/en_US/bigrams.csv")
-                          
-#################################TRIGRAMS#######################################
-trigrams1 <- unnest_tokens(corpus1, trigrams, text, token = "ngrams", n = 3,
-                          stopwords = c("rt"))
-trigram_total1 <- nrow(trigrams1)
-trigrams1 <- trigrams1 %>% count(trigrams, sort = T) %>% filter(n > 1)
 
