@@ -10,6 +10,8 @@ generate_sentence <- function(sentence, add = sample(1:9, 1)){
     for(i in seq_len(add)){
         sentence <- c(sentence, get_next_word(sentence))
     }
+    substr(sentence[1], 1, 1) <- toupper(substr(sentence[1], 1, 1))
+    sentence[length(sentence)] <- paste0(sentence[length(sentence)], ".")
     cat(sentence)
 }
 
