@@ -14,10 +14,10 @@ generate_sentence <- function(sentence, add = sample(1:9, 1)){
 
 
 get_next_word <- function(string){
-    if(get_word(string, 4) == T){
-        word <- get_word(string, 4)
-    }
-    else if(get_word(string, 3) == T){
+#    if(get_word(string, 4) == T){
+#        word <- get_word(string, 4)
+#    }
+    if(get_word(string, 3) == T){
         word <- get_word(string, 3)
     }
     else if(get_word(string, 2) == T){
@@ -81,10 +81,9 @@ build_phrase <- function(string, n){
 
 ################################################################################
 
-## Actual script
-
 ## Read in data
 bigrams <- read_csv("./final/en_US/bigrams.csv")
+trigrams <- read_csv("./final/en_US/trigrams.csv")
 
 
 
