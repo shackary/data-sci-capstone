@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidyr)
+library(readr)
 library(tidytext)
 
 ################################################################################
@@ -85,41 +86,8 @@ build_phrase <- function(string, n){
 ## Actual script
 
 ## Read in data
-twitter <- readLines("./final/en_US/twitter_filtered.txt", encoding = "UTF-8")
-blogs <- readLines("./final/en_US/blog_filtered.txt", encoding = "UTF-8")
-news <- readLines("./final/en_US/news_filtered.txt", encoding = "UTF-8")
+bigrams <- read_csv("./final/en_US/bigrams.csv")
 
-
-
-## Concatenate them into the full data set
-corpus <- c(twitter, blogs, news)
-rm(twitter, blogs, news)
-
-## Tokenize
-corpus <- tibble(text = corpus)
-bigrams <- unnest_tokens(corpus, bigrams, text, token = "ngrams", n = 2,
-                         stopwords = c("rt"))
-trigrams <- unnest_tokens(corpus, trigrams, text, token = "ngrams", n =3)
-tetragrams <- unnest_tokens(corpus, tetragrams, text, token = "ngrams", n = 4)
-
-## Grab the total number of ngrams, as we'll need these later
-bigram_total <- nrow(bigrams)
-trigram_total <- nrow(trigrams)
-tetragram_total <- nrow(tetragrams)
-
-## Tablefy and calculate weights
-bigrams <- bigrams %>% separate(bigrams, into = c("word1", "word2"), sep = " ") %>%
-    count(word1, word2, sort = T) %>% 
-    mutate(n = n/bigram_total)
-trigrams <- trigrams %>% separate(trigrams, into = c("word1", "word2", "word3"),
-                     sep = " ") %>%
-    count(word1, word2, word3, sort = T) %>% 
-    mutate(n = n/trigram_total)
-tetragrams <- tetragrams %>% separate(tetragrams,
-                                      into = c("word1", "word2", "word3", "word4"),
-                                  sep = " ") %>%
-    count(word1, word2, word3, word4, sort = T) %>% 
-    mutate(n = n/tetragram_total)
 
 
 
