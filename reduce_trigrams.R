@@ -36,4 +36,25 @@ trigrams2 <- unnest_tokens(corpus2, trigrams, text, token = "ngrams", n = 3,
                            stopwords = c("rt"))
 trigram_total2 <- nrow(trigrams2)
 trigrams2 <- trigrams2 %>% count(trigrams, sort = T) %>% filter(n > 2)
+write_csv(trigrams2, path = "./final/en_US/trigrams2.csv")
+rm(corpus2, trigrams2)
+
+## Part 3
+trigrams3 <- unnest_tokens(corpus3, trigrams, text, token = "ngrams", n = 3,
+                           stopwords = c("rt"))
+trigram_total3 <- nrow(trigrams3)
+trigrams3 <- trigrams3 %>% count(trigrams, sort = T) %>% filter(n > 2)
+write_csv(trigrams3, path = "./final/en_US/trigrams3.csv")
+rm(corpus3, trigrams3)
+
+################################################################################
+
+## Stitch them together
+
+## First parts 1 and 2
+
+
+
+
+
 
