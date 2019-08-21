@@ -44,11 +44,6 @@ get_possibilities <- function(string, n){
         out <- trigrams %>% filter(word1 == phrase[1], word2 == phrase[2])
         
     }
-    if(length(phrase) == 3){
-        out <- tetragrams %>% filter(word1 == phrase[1], word2 == phrase[2],
-                              word3 == phrase[3])
-        
-    }
     out
 }
 
@@ -69,15 +64,8 @@ build_phrase <- function(string, n){
         n2 <- prep_string(string, n)[2]
         out <- c(n1, n2)
     }
-    if(n == 3){
-        n1 <- prep_string(string, n)[1]
-        n2 <- prep_string(string, n)[2]
-        n3 <- prep_string(string, n)[3]
-        out <- c(n1, n2, n3)
-    }
     out
 }
-
 
 ################################################################################
 
