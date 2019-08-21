@@ -6,7 +6,8 @@ library(tokenizers)
 
 ## Main prediction functions
 
-generate_sentence <- function(sentence, add = sample(1:9, 1)){
+generate_sentence <- function(sentence = sample_n(bigrams, 1)[[1]],
+                              add = sample(1:15, 1)){
     for(i in seq_len(add)){
         nxt <- get_next_word(sentence)
         if(nxt == "i") nxt <- toupper(nxt)
