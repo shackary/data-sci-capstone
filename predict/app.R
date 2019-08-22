@@ -33,7 +33,7 @@ ui <- fluidPage(
                        
                        br(),
                        
-                       h3("Start typing, and I will predict as you go:"),
+                       h4("Start typing, and I will predict as you go:"),
                        
                        br(),
                        
@@ -58,10 +58,10 @@ ui <- fluidPage(
                          
                          actionButton("inspect_go", label = "Go", icon = icon("check-circle")),
                          
-                         br(),
+                         textOutput("match_message"),
                          
-                         plotOutput("matches"),
-                         textOutput("match_message")
+                         plotOutput("matches")
+                         
                          
                 ),
                 
@@ -70,7 +70,7 @@ ui <- fluidPage(
                          
                          br(),
                          
-                         h3("Press the button to generate a random sentence."),
+                         h4("Press the button to generate a random sentence."),
                          
                          actionButton("sentence", "Give me some nonsense!"),
                          
@@ -99,22 +99,56 @@ server <- function(input, output) {
     # Generate plot
     observeEvent(input$inspect_go, {
         req(input$inspect)
+        
+        #trigram plot
         if(nrow(get_possibilities(input$inspect, 3)) > 0){
             output$match_message <- NULL
             poss <- get_possibilities(input$inspect, 3)
             if(nrow(poss) > 10){
                 poss <- poss[1:10,]
             }
-            
+            poss <- poss %>% mutate(n = n/sum(n))
+            output$matches <- renderPlot({
+                plot <- ggplot(data= poss, aes(x = reorder(word3, n), y = n)) +
+                    geom_bar(stat = "identity", fill = "aquamarine3") +
+                    coord_flip() +
+                    ggtitle("Next word possibilities") +
+                    xlab("") +
+                    ylab("Probability of being picked") + 
+                    theme(axis.text = element_text(size = 14),
+                          title = element_text(size = 16)) + 
+                    legend()
+                plot
+            })
         }
+        
+        #bigram plot
         else if(nrow(get_possibilities(input$inspect, 2)) > 0){
             output$match_message <- NULL
-            
+            poss <- get_possibilities(input$inspect, 2)
+            if(nrow(poss) > 10){
+                poss <- poss[1:10,]
+            }
+            poss <- poss %>% mutate(n = n/sum(n))
+            output$matches <- renderPlot({
+                plot <- ggplot(data= poss, aes(x = reorder(word2, n), y = n)) +
+                    geom_bar(stat = "identity", fill = "chocolate2") +
+                    coord_flip() +
+                    ggtitle("Next word possibilities") +
+                    xlab("") +
+                    ylab("Probability of being picked") +
+                    theme(axis.text = element_text(size = 14),
+                          title = element_text(size = 16))
+                plot
+            })
         }
-        else 
-        output$matches <- NULL
-        output$match_message <- renderText({"No match found. In this case,
-            the app guesses a word at random!"})
+        
+        #display a message
+        else{ 
+            output$matches <- NULL
+            output$match_message <- renderText({"No match found. In this case,
+                the app guesses a word at random!"})
+        }
     })
     
     
