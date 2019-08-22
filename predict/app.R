@@ -116,8 +116,7 @@ server <- function(input, output) {
                     xlab("") +
                     ylab("Probability of being picked") + 
                     theme(axis.text = element_text(size = 14),
-                          title = element_text(size = 16)) + 
-                    legend()
+                          title = element_text(size = 16))
                 plot
             })
         }
