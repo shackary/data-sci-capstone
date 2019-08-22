@@ -1,5 +1,5 @@
 library(shiny)
-source("../create_model.R")
+source("create_model.R")
 
 # Define UI
 ui <- fluidPage(

@@ -72,8 +72,8 @@ build_phrase <- function(string, n){
 ################################################################################
 
 ## Read in data
-bigrams <- read_csv("../final/en_US/bigrams.csv")
-trigrams <- read_csv("../final/en_US/trigrams.csv")
+bigrams <- read_csv("data/bigrams.csv")
+trigrams <- read_csv("data/trigrams.csv")
 
 
 
