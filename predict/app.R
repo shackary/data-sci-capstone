@@ -115,6 +115,7 @@ server <- function(input, output) {
                     ggtitle("Next word possibilities") +
                     xlab("") +
                     ylab("Probability of being picked") + 
+                    labs(fill = "Trigram match") + 
                     theme(axis.text = element_text(size = 14),
                           title = element_text(size = 16))
                 plot
