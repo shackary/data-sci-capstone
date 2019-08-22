@@ -60,7 +60,16 @@ ui <- fluidPage(
                          
                          textOutput("match_message"),
                          
-                         plotOutput("matches")
+                         plotOutput("matches"),
+                         
+                         br(),
+                         
+                         br(),
+                         
+                         br(),
+                         
+                         tags$i("For advanced users: green bars indicate a trigram
+                                match, orange bars indicate a bigram match.")
                          
                          
                 ),
@@ -77,7 +86,7 @@ ui <- fluidPage(
                          br(),
                          br(),
                          
-                         span(textOutput("sentence"), style = "font-size:large;")
+                         span(textOutput("sentence"), style = 'font-size:large;')
                 )
             )
         )
