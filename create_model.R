@@ -1,6 +1,7 @@
 library(dplyr)
 library(readr)
 library(tokenizers)
+library(ggplot2)
 
 ################################################################################
 
@@ -15,7 +16,7 @@ generate_sentence <- function(sentence = sample_n(bigrams, 1)[[1]],
     }
     substr(sentence, 1, 1) <- toupper(substr(sentence, 1, 1))
     sentence <- paste0(sentence, ".")
-    cat(sentence, "\n")
+    sentence
 }
 
 
