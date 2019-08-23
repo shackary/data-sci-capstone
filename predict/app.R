@@ -23,7 +23,9 @@ ui <- fluidPage(
             p("Have the model generate a random sentence. This is just for fun,
               as it will mostly create nonsense."),
             br(),
-            tags$i("Navigate between gadgets using the tabs at the top")
+            tags$i("Navigate between gadgets using the tabs at the top. More 
+                   info on the project is available "),
+            tags$a(href = "http://rpubs.com/shackary/cap-pitch", "here.")
         ),
         
         mainPanel(
@@ -43,7 +45,11 @@ ui <- fluidPage(
                        
                        span(textOutput("phrase_start", inline = T), style = "font-size:large;"),
                        
-                       span(textOutput("predicted_word", inline = T), style = "background-color: #FFFF00; font-size:large; ")
+                       span(textOutput("predicted_word", inline = T), style = "background-color: #FFFF00; font-size:large; "),
+                       
+                       br(),
+                       br(),
+                       br()
                        
                 ),
                 
@@ -69,7 +75,11 @@ ui <- fluidPage(
                          br(),
                          
                          tags$i("For advanced users: green bars indicate a trigram
-                                match, orange bars indicate a bigram match.")
+                                match, orange bars indicate a bigram match."),
+                         
+                         br(),
+                         br(),
+                         br()
                          
                          
                 ),
@@ -81,12 +91,21 @@ ui <- fluidPage(
                          
                          h4("Press the button to generate a random sentence."),
                          
+                         tags$i("I may take several seconds to think."),
+                         
+                         br(),
+                         br(),
+                         
                          actionButton("sentence", "Give me some nonsense!"),
                          
                          br(),
                          br(),
                          
-                         span(textOutput("sentence"), style = 'font-size:large;')
+                         span(textOutput("sentence"), style = 'font-size:large;'),
+                         
+                         br(),
+                         br(),
+                         br()
                 )
             )
         )
@@ -135,10 +154,10 @@ server <- function(input, output) {
         else if(nrow(get_possibilities(input$inspect, 2)) > 0){
             output$match_message <- NULL
             poss <- get_possibilities(input$inspect, 2)
+            poss <- poss %>% mutate(n = n/sum(n))
             if(nrow(poss) > 10){
                 poss <- poss[1:10,]
             }
-            poss <- poss %>% mutate(n = n/sum(n))
             output$matches <- renderPlot({
                 plot <- ggplot(data= poss, aes(x = reorder(word2, n), y = n)) +
                     geom_bar(stat = "identity", fill = "chocolate2") +
